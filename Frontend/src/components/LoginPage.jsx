@@ -89,12 +89,7 @@ const LoginPage = () => {
           Sign in
         </button>
 
-        <div className="separator">or</div>
-
-        <button type="button" className="google-button">
-          <FcGoogle size={20} />
-          Sign in with Google
-        </button>
+        
 
       </form>
     </div>
