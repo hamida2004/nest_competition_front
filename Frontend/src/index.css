@@ -1,3 +1,9 @@
 body {
     margin-inline: 24px;
+    font-family: 'Poppins', sans-serif;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
 }

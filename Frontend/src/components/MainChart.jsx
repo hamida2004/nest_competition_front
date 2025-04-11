@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -10,20 +10,63 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { name: "Jan", visits: 4000, purchases: 2400, returns: 1400, revenue: 3000 },
-  { name: "Feb", visits: 3000, purchases: 1398, returns: 1600, revenue: 4200 },
-  { name: "Mar", visits: 2800, purchases: 9800, returns: 1800, revenue: 6000 },
-  { name: "Apr", visits: 2780, purchases: 3908, returns: 1500, revenue: 5100 },
-  { name: "May", visits: 3200, purchases: 4000, returns: 1300, revenue: 4800 },
-  { name: "Jun", visits: 3500, purchases: 3200, returns: 1700, revenue: 5200 },
+// Colors array with 24 distinct colors
+const colors = [
+  "#6366F1",
+  "#10B981",
+  "#FBBF24",
+  "#EF4444",
+  "#8B5CF6",
+  "#3B82F6",
+  "#F43F5E",
+  "#14B8A6",
+  "#EC4899",
+  "#F97316",
+  "#0EA5E9",
+  "#84CC16",
+  "#DB2777",
+  "#2DD4BF",
+  "#F59E0B",
+  "#6EE7B7",
+  "#A78BFA",
+  "#FCD34D",
+  "#FB7185",
+  "#BAE6FD",
+  "#C084FC",
+  "#FDE047",
+  "#4ADE80",
+  "#FF8A65",
 ];
 
-export default function StockAnalyticsCard() {
+export default function StockAnalyticsCard({ data, generate_data }) {
+  // Automatically generate data every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      generate_data();
+    }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [generate_data]);
+
+  // Dynamically extract features from the first data point
+  const features =
+    data.length > 0
+      ? Object.keys(data[0]).filter((key) => key !== "minute") // Exclude 'minute' as it's used for the X-axis
+      : [];
+
   return (
-    <div style={{ position: "relative", padding: "24px", backgroundColor: "white", borderRadius: "16px" }}>
-      {/* BOUTON FLOTTANT EN HAUT À GAUCHE */}
+    <div
+      style={{
+        position: "relative",
+        padding: "24px",
+        backgroundColor: "white",
+        borderRadius: "16px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <button
+        onClick={generate_data}
         style={{
           position: "absolute",
           top: "-15px",
@@ -38,54 +81,32 @@ export default function StockAnalyticsCard() {
           textTransform: "lowercase",
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
           cursor: "pointer",
+          zIndex: 1,
         }}
       >
         generate signal
       </button>
 
-      {/* TITRE */}
-      <h2 style={{ textAlign: "center", marginTop: "16px" }}>Stock Analytics</h2>
+      <h2 style={{ textAlign: "center", marginTop: "16px" }}>Machine Analytics</h2>
 
-      {/* GRAPHIQUE */}
       <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={data}>
+        <LineChart data={[...data].reverse().slice(0, 10)}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="minute" label={"time (minute)"} />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line
-            type="monotone"
-            dataKey="visits"
-            stroke="#6366F1"
-            strokeWidth={2}
-            dot={{ r: 4 }}
-            name="Website Visits"
-          />
-          <Line
-            type="monotone"
-            dataKey="purchases"
-            stroke="#10B981"
-            strokeWidth={2}
-            dot={{ r: 4 }}
-            name="Product Purchases"
-          />
-          <Line
-            type="monotone"
-            dataKey="returns"
-            stroke="#FBBF24"
-            strokeWidth={2}
-            dot={{ r: 4 }}
-            name="Product Returns"
-          />
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="#EF4444"
-            strokeWidth={2}
-            dot={{ r: 4 }}
-            name="Total Revenue"
-          />
+          {features.map((feature, index) => (
+            <Line
+              key={feature}
+              type="monotone"
+              dataKey={feature}
+              stroke={colors[index % colors.length]}
+              strokeWidth={2}
+              dot={{ r: 4 }}
+              name={feature.replace(/_/g, " ")} // Replace underscores with spaces
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
     </div>

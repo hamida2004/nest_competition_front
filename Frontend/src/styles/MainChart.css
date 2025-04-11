@@ -1,34 +1,37 @@
 /* src/styles/StockAnalyticsCard.css */
 .stock-card-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
+  align-items: center;
+  gap: 20px;
   padding: 20px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .generate-btn {
-  background-color: #1b9c1b;
+  background-color: #22C55E;
   color: white;
-  padding: 8px 16px;
+  padding: 10px 20px;
+  margin-inline: 20px;
   border: none;
-  border-radius: 20px;
+  border-radius: 999px;
   font-weight: bold;
+  font-size: 14px;
+  text-transform: lowercase;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
 .generate-btn:hover {
-  background-color: #147714;
+  background-color: #16A34A;
 }
 
 .stock-card {
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  flex-grow: 1;
   padding: 20px;
-  width: 100%;
-  max-width: 700px;
 }
 
 .stock-card h3 {
@@ -36,7 +39,4 @@
   margin-bottom: 16px;
   font-size: 18px;
   color: #333;
-}
-.stock-card-wrapper {
-  width: 100%;
 }
