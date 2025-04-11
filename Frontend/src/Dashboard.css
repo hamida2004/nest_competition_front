@@ -1,0 +1,44 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background-color: #fff;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* centre les cards */
+  gap: 24px;               /* ✅ ajoute de l’espace entre les cards */
+  margin-top: 40px;
+  
+}
+
+.stock-analytics-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 40px 0;
+  gap: 24px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.left-graph,
+.right-graph {
+  flex: 1;
+  max-width: 48%;
+}
