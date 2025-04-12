@@ -10,14 +10,18 @@ export default function Topbar() {
         <span className="secure">Secure</span>
       </div>
       <div className="user-info">
-        <div className="icon-container">
+        <div className="icon-container"
+        onClick={()=>{
+          console.log('clicked')
+        }}
+        >
           <FaBell className="icon gray-icon" />
         </div>
         <div className="icon-container">
           <FaRegMoon className="icon gray-icon" />
         </div>
         <div className="profile">
-          <span>Aouaichia Hafsa</span>
+          <span>Admin</span>
           <div className="avatar-circle">
             <FaUser className="avatar-icon" />
           </div>

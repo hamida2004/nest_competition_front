@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Topbar from "./components/Topbar";
 import StatCard from "./components/StatCard";
 import AnalyticsChart from "./components/MainChart";
@@ -8,7 +8,6 @@ import "./Dashboard.css";
 export default function Dashboard() {
   const [predict, setPredict] = useState([]);
   const [reduce, setReduce] = useState([]);
-
   // Function to generate a random value within a given range
   const getRandomValue = (min, max) => Math.random() * (max - min) + min;
 
@@ -49,6 +48,62 @@ export default function Dashboard() {
     setReduce((prev) => [...prev, newDataPoint].slice(-20)); // Keep last 20 points
   };
 
+  // State for consumption metrics
+  const [outsideTempData, setOutsideTempData] = useState([]);
+  const [insideTempData, setInsideTempData] = useState([]);
+  const [rotationalSpeedData, setRotationalSpeedData] = useState([]);
+  const [torqueData, setTorqueData] = useState([]);
+
+  // Function to generate random values within a range
+
+  // Generate new data point for Outside Temperature
+  const generateOutsideTemp = () => {
+    const newDataPoint = {
+      day: outsideTempData.length + 1,
+      value: getRandomValue(20, 30), // Example range for outside temperature
+    };
+    setOutsideTempData((prev) => [...prev, newDataPoint].slice(-7)); // Keep last 7 points
+  };
+
+  // Generate new data point for Inside Temperature
+  const generateInsideTemp = () => {
+    const newDataPoint = {
+      day: insideTempData.length + 1,
+      value: getRandomValue(35, 45), // Example range for inside temperature
+    };
+    setInsideTempData((prev) => [...prev, newDataPoint].slice(-7));
+  };
+
+  // Generate new data point for Rotational Speed
+  const generateRotationalSpeed = () => {
+    const newDataPoint = {
+      day: rotationalSpeedData.length + 1,
+      value: Math.floor(getRandomValue(1000, 2000)), // Example range for rotational speed
+    };
+    setRotationalSpeedData((prev) => [...prev, newDataPoint].slice(-7));
+  };
+
+  // Generate new data point for Torque
+  const generateTorque = () => {
+    const newDataPoint = {
+      day: torqueData.length + 1,
+      value: getRandomValue(30, 50), // Example range for torque
+    };
+    setTorqueData((prev) => [...prev, newDataPoint].slice(-7));
+  };
+
+  // Automatically generate data every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      generateOutsideTemp();
+      generateInsideTemp();
+      generateRotationalSpeed();
+      generateTorque();
+    }, 2000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
   return (
     <div className="dashboard">
       <main className="main">
@@ -81,6 +136,43 @@ export default function Dashboard() {
           />
         </section>
 
+
+        <section className="cards">
+          {/* Outside Temperature Card */}
+          <ConsumptionCard
+            label="Outside Temperature"
+            title="Outside Temp"
+            value={`${getRandomValue(20, 30).toFixed(1)}°C`}
+            color="#4285F4"
+            data={outsideTempData}
+          />{/* Inside Temperature Card */}
+          <ConsumptionCard
+            label="Inside Temperature"
+            title="Inside Temp"
+            value={`${getRandomValue(35, 45).toFixed(1)}°C`}
+            color="#34A853"
+            data={insideTempData}
+          />
+
+          {/* Rotational Speed Card */}
+          <ConsumptionCard
+            label="Rotational Speed"
+            title="Rotational Speed"
+            value={`${Math.floor(getRandomValue(1000, 2000))} RPM`}
+            color="#EA4335"
+            data={rotationalSpeedData}
+          />
+
+          {/* Torque Card */}
+          <ConsumptionCard
+            label="Torque"
+            title="Torque"
+            value={`${getRandomValue(30, 50).toFixed(1)} Nm`}
+            color="#A142F4"
+            data={torqueData}
+          />
+        </section>
+
         <section className="stock-analytics-row">
           <div className="left-graph">
             <AnalyticsChart
@@ -94,33 +186,6 @@ export default function Dashboard() {
               generate_data={generate_reduce}
             />
           </div>
-        </section>
-
-        <section className="cards">
-          <ConsumptionCard
-            label="Service Plus De Fourniture"
-            title="Service A"
-            value="25%"
-            color="#4285F4"
-          />
-          <ConsumptionCard
-            label="Produit Plus Consommé"
-            title="Papier"
-            value="95%"
-            color="#34A853"
-          />
-          <ConsumptionCard
-            label="Produit Moins Consommé"
-            title="Papier"
-            value="95%"
-            color="#EA4335"
-          />
-          <ConsumptionCard
-            label="Article Plus Consommé"
-            title="Article A"
-            value="95%"
-            color="#A142F4"
-          />
         </section>
       </main>
     </div>

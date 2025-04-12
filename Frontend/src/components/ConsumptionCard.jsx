@@ -1,4 +1,3 @@
-// src/components/ConsumptionCard.jsx
 import React from "react";
 import {
   AreaChart,
@@ -8,16 +7,7 @@ import {
 } from "recharts";
 import "../styles/ConsumptionCard.css";
 
-const sampleData = [
-  { day: "M", value: 20 },
-  { day: "T", value: 30 },
-  { day: "W", value: 25 },
-  { day: "T", value: 40 },
-  { day: "F", value: 45 },
-  { day: "S", value: 35 },
-];
-
-export default function ConsumptionCard({ label, title, value, color }) {
+export default function ConsumptionCard({ label, title, value, color, data }) {
   return (
     <div className="consumption-card">
       <div className="card-label">{label}</div>
@@ -27,7 +17,7 @@ export default function ConsumptionCard({ label, title, value, color }) {
       </div>
       <div className="card-chart">
         <ResponsiveContainer width="100%" height={60}>
-          <AreaChart data={sampleData}>
+          <AreaChart data={data}>
             <Tooltip />
             <Area
               type="monotone"
