@@ -45,11 +45,9 @@ export default function StockAnalyticsCard({ data, generate_data, title , report
   useEffect(() => {
     let interval;
     if (generate) {
-      interval = setInterval(() => {
-        generate_data();
-        // send data
-        console.log('sending data')
-      }, 200);
+      interval = setInterval( async() => {
+       await generate_data();
+      }, 1000);
     }
     // Cleanup interval on component unmount or when generate changes
     return () => clearInterval(interval);

@@ -8,6 +8,7 @@ import {
 import "../styles/ConsumptionCard.css";
 
 export default function ConsumptionCard({ label, title, value, color, data }) {
+  
   return (
     <div className="consumption-card">
       <div className="card-label">{label}</div>
