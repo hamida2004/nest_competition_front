@@ -15,10 +15,7 @@ export default function StatCard({ title, value, change, active }) {
           <HiOutlineDatabase className="icon" />
         </div>
       </div>
-      <div className={`change ${active ? "up" : "down"}`}>
-        <FaArrowUp color="green" />
-        {change} this week
-      </div>
+      
     </div>
   );
 }

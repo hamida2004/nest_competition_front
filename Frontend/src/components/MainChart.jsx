@@ -47,7 +47,7 @@ export default function StockAnalyticsCard({ data, generate_data, title , report
     if (generate) {
       interval = setInterval( async() => {
        await generate_data();
-      }, 1000);
+      }, 20000);
     }
     // Cleanup interval on component unmount or when generate changes
     return () => clearInterval(interval);

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import '../styles/Login.css';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -82,6 +84,9 @@ const LoginPage = () => {
         </div>
 
         <button
+        onClick={()=>{
+          navigate('/dashboard')
+        }}
           type="submit"
           disabled={!isFormValid}
           className="submit-button"
