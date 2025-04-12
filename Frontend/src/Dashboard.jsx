@@ -6,6 +6,7 @@ import ConsumptionCard from "./components/ConsumptionCard";
 import "./Dashboard.css";
 
 export default function Dashboard() {
+  const [failure, setFailure] = useState(false);
   const [predict, setPredict] = useState([]);
   const [reduce, setReduce] = useState([]);
   // Function to generate a random value within a given range
@@ -176,18 +177,58 @@ export default function Dashboard() {
         <section className="stock-analytics-row">
           <div className="left-graph">
             <AnalyticsChart
+              report={true}
+              handleViewReport={() => setFailure((prev) => !prev)}
+              title="Predictive Maintenance"
               data={predict}
               generate_data={generate_predict}
             />
           </div>
           <div className="right-graph">
             <AnalyticsChart
+              title="Reducing Subcarriers"
               data={reduce}
               generate_data={generate_reduce}
             />
           </div>
         </section>
       </main>
+      {failure && (
+        <div style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          top: 0,
+          left: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+
+        }}>
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              boxShadow: '0 0 10px rgba(0,0,0,0.5)',
+              textAlign: 'center',
+              width: '300px',
+              height: 'fit-content',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '10px',
+              zIndex: 9999999,
+            }}
+          >
+            <h2>Failure Detected!</h2>
+            <p>Please check the system immediately.</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

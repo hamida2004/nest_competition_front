@@ -38,7 +38,7 @@ const colors = [
   "#FF8A65",
 ];
 
-export default function StockAnalyticsCard({ data, generate_data }) {
+export default function StockAnalyticsCard({ data, generate_data, title , report, handleViewReport}) {
   const [generate, setGenerate] = useState(false);
 
   // Automatically generate data every 2 seconds when generate is true
@@ -104,9 +104,35 @@ export default function StockAnalyticsCard({ data, generate_data }) {
         }}
       >
         {generate ? "stop signal" : "generate signal"}
+      </button> {
+        report && (
+          <button
+        onClick={handleViewReport}
+        aria-label="view report"
+        style={{
+          position: "absolute",
+          top: "-15px",
+          right: "-15px",
+          backgroundColor: "#55b5ed", // Red for stop, green for start
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "999px",
+          fontWeight: "bold",
+          fontSize: "14px",
+          textTransform: "lowercase",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          cursor: "pointer",
+          zIndex: 1,
+          transition: "background-color 0.3s ease",
+        }}
+      >
+        view report
       </button>
+        )
+      }
 
-      <h2 style={{ textAlign: "center", marginTop: "16px" }}>Machine Analytics</h2>
+      <h2 style={{ textAlign: "center", marginTop: "16px" }}>{title}</h2>
 
       {/* Render chart only if data exists */}
       <ResponsiveContainer width="100%" height={350}>
