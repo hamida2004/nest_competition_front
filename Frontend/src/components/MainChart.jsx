@@ -38,26 +38,23 @@ const colors = [
   "#FF8A65",
 ];
 
-export default function StockAnalyticsCard({ data, generate_data, title , report, handleViewReport}) {
-  const [generate, setGenerate] = useState(false);
+export default function StockAnalyticsCard({ data, generate_data, title , generate , report, handleViewReport ,handleClick}) {
+  // const [generate, setGenerate] = useState(false);
 
   // Automatically generate data every 2 seconds when generate is true
   useEffect(() => {
     let interval;
     if (generate) {
       interval = setInterval( async() => {
-       await generate_data();
+      generate && await generate_data();
       }, 20000);
     }
     // Cleanup interval on component unmount or when generate changes
     return () => clearInterval(interval);
   }, [generate, generate_data]);
 
-  // Toggle generate state
-  const handleClick = () => {
-    setGenerate((prev) => !prev);
-  };
 
+  
   // Dynamically extract features from the first data point
   const features =
     Array.isArray(data) && data.length > 0

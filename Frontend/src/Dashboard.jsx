@@ -14,9 +14,11 @@ export default function Dashboard() {
     Inside_temperature: 0,
     Outside_temperature: 0,
   });
+  const [generatePredict, setGeneratePredict] = useState(false);
+
   const [failure, setFailure] = useState(false);
   const [frequency, setFrequency] = useState(0);
-   const [activate, setActive] = useState(false);
+  const [activate, setActive] = useState(false);
   const [predict, setPredict] = useState([]);
   const [reduce, setReduce] = useState([]);
   const [report, setReport] = useState({});
@@ -26,10 +28,19 @@ export default function Dashboard() {
   const [torqueData, setTorqueData] = useState([]);
   const [currentRotationalSpeed, setCurrentRotationalSpeed] = useState(0);
   const [currentTorque, setCurrentTorque] = useState(0);
+  const [nextTemp,setNextTemp]=useState(0);
 
   // Helper function
   const getRandomValue = useCallback((min, max) => Math.random() * (max - min) + min, []);
 
+  const failureLabels = {
+    0: "No Failure",
+    1: "Tool Wear Failure",
+    2: "Heat Dissipation Failure",
+    3: "Power Failure",
+    4: "Overstrain Failure",
+    5: "Random Noise Failure",
+  };
   // Cooling system API call
   const Cooling = useCallback(async () => {
     const date = new Date();
@@ -66,13 +77,13 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
         }
       });
-
-      if (data.representative_temp > 27) {
-         writeData("Commande", {
+      setNextTemp(data.representative_temp);
+      if (data.representative_temp > 26.5) {
+        writeData("Commande", {
           fanActive: temp.Outside_temperature < data.representative_temp,
         });
         setActive(temp.Outside_temperature < data.representative_temp);
-     
+       
       }
     } catch (error) {
       console.error("Cooling API error:", error);
@@ -120,6 +131,7 @@ export default function Dashboard() {
     const now = new Date();
 
 
+
     const newDataPoint = {
       Longitude: parseFloat(getRandomValue(-8.655394, -8.490956).toFixed(6)),
       Latitude: parseFloat(getRandomValue(51.934883, 52.138499).toFixed(6)),
@@ -153,7 +165,7 @@ export default function Dashboard() {
     setReduce(prev => [...prev.slice(-19), newDataPoint]);
 
     try {
-    const data =  await axios.post("http://localhost:8000/api/reduce", {
+      const data = await axios.post("http://localhost:8000/api/reduce", {
         station: 1,
         ...newDataPoint
       }, {
@@ -244,23 +256,23 @@ export default function Dashboard() {
         <Topbar />
 
         <section className="stats">
-        <StatCard title="Components" value="State" active />
-          <StatCard title="Fans" value={activate ? "Active":"Non Active"} active />
-          <StatCard title="Extracteur" value={activate ? "Active":"Non Active"} active={false} />
-          <StatCard title="Cooling" value={!activate ? "Active":"Non Active"} active={false} />
+          <StatCard title="Next 24h temperature" value={`${parseFloat(nextTemp.toFixed(2))} °C`} active />
+          <StatCard title="Fans" value={activate ? "Active" : "Non Active"} active />
+          <StatCard title="Extracteur" value={activate ? "Active" : "Non Active"} active={false} />
+          <StatCard title="Cooling" value={!activate ? "Active" : "Non Active"} active={false} />
         </section>
         <section
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(36, 255, 127, 0.4)",
-          padding: "20px",
-          border: "1px solid rgb(36, 255, 127)",
-          width: "100%",
-          gap: "10px",
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(36, 255, 127, 0.4)",
+            padding: "20px",
+            border: "1px solid rgb(36, 255, 127)",
+            width: "100%",
+            gap: "10px",
 
-        }}
+          }}
         >
           <p>the number of ofdm frequencies needed :</p>
           <h3>{frequency}</h3>
@@ -304,6 +316,7 @@ export default function Dashboard() {
               title="Predictive Maintenance"
               data={predict}
               generate_data={generate_predict}
+              generate={generatePredict}
             />
           </div>
           <div className="right-graph">
@@ -311,6 +324,7 @@ export default function Dashboard() {
               title="Reducing Subcarriers"
               data={reduce}
               generate_data={generate_reduce}
+              generate={generatePredict}
             />
           </div>
         </section>
@@ -333,53 +347,43 @@ export default function Dashboard() {
           }}
 
         >
-          <ReportComponent report={report} />
+          <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "500px", margin: "auto", border: "1px solid #ccc", borderRadius: "8px", backgroundColor: "#fff" }}>
+            <h2 style={{ marginBottom: "10px", color: "#4A7F5D" }}>Equipment Failure Report</h2>
+
+            <div style={{ marginBottom: "20px" }}>
+              <h3 style={{ margin: "10px 0", fontSize: "16px", color: "#333" }}>Failure Probabilities:</h3>
+              <ul style={{ listStyleType: "none", padding: 0 }}>
+                {Object.entries(report.failure_probabilities).map(([key, value]) => (
+                  <li key={key} style={{ marginBottom: "5px" }}>
+                    <strong>{failureLabels[key]}:</strong> {value}%
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div
+              onClick={() => setFailure(prev => !prev)}
+              style={{ position: "absolute", top: "10px", right: "10px", cursor: "pointer" }}
+
+            >
+
+              <IoIosClose
+                color="red"
+                size={40}
+              />
+            </div>
+            <div>
+              <p style={{ fontSize: "16px", marginBottom: "5px" }}>
+                <strong>Most Likely Failure:</strong> {failureLabels[report.most_likely_failure]}
+              </p>
+              <p style={{ fontSize: "16px" }}>
+                <strong>Maximum Probability:</strong> {report.max_probability}%
+              </p>
+            </div>
+          </div>
+
         </div>
       )}
     </div>
   );
 }
-
-const ReportComponent = ({ report }) => {
-  const failureLabels = {
-    0: "No Failure",
-    1: "Tool Wear Failure",
-    2: "Heat Dissipation Failure",
-    3: "Power Failure",
-    4: "Overstrain Failure",
-    5: "Random Noise Failure",
-  };
-
-  return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "500px", margin: "auto", border: "1px solid #ccc", borderRadius: "8px" , backgroundColor: "#fff"}}>
-      <h2 style={{ marginBottom: "10px", color: "#4A7F5D" }}>Equipment Failure Report</h2>
-
-      <div style={{ marginBottom: "20px" }}>
-        <h3 style={{ margin: "10px 0", fontSize: "16px", color: "#333" }}>Failure Probabilities:</h3>
-        <ul style={{ listStyleType: "none", padding: 0 }}>
-          {Object.entries(report.failure_probabilities).map(([key, value]) => (
-            <li key={key} style={{ marginBottom: "5px" }}>
-              <strong>{failureLabels[key]}:</strong> {value}%
-            </li>
-          ))}
-        </ul>
-      </div>
-      <IoIosClose
-      
-      color="red"
-      size={40}
-      style={{ position: "absolute", top: "10px", right: "10px", cursor: "pointer" }}
-      onClick={() => setFailure(false)}
-      />
-      <div>
-        <p style={{ fontSize: "16px", marginBottom: "5px" }}>
-          <strong>Most Likely Failure:</strong> {failureLabels[report.most_likely_failure]}
-        </p>
-        <p style={{ fontSize: "16px" }}>
-          <strong>Maximum Probability:</strong> {report.max_probability}%
-        </p>
-      </div>
-    </div>
-  );
-};
 
